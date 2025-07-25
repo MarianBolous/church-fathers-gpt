@@ -1,0 +1,29 @@
+
+version: '3.8'
+
+services:
+  church-fathers-gpt:
+    build: .
+    container_name: church-fathers-gpt
+    ports:
+      - "8501:8501"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      PINECONE_API_KEY: ${PINECONE_API_KEY}
+      PINECONE_ENV: ${PINECONE_ENV}
+    volumes:
+      - ./raw_docs:/app/raw_docs
+      - ./processed_chunks:/app/processed_chunks
+    depends_on:
+      - chroma
+
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    container_name: chroma-db
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma
+
+volumes:
+  chroma_data:
